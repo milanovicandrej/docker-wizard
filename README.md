@@ -32,6 +32,10 @@ make install
 
 # Run the CLI
 docker-wizard --output Dockerfile
+
+# Install from .deb or .rpm (from GitHub Releases)
+sudo dpkg -i docker-wizard_0.0.1_amd64.deb   # For Debian/Ubuntu
+sudo rpm -i docker-wizard-0.0.1-1.x86_64.rpm # For Fedora/CentOS/RHEL
 ```
 
 ---
@@ -41,9 +45,16 @@ docker-wizard --output Dockerfile
 - `cmd/docker-wizard/main.go` — CLI entry point
 - `internal/generate/generate.go` — Dockerfile generation logic
 - `internal/generate/generate_test.go` — Unit tests
-- `.github/copilot-instructions.md` — Copilot custom instructions
 - `.gitignore` — Ignore build artifacts and IDE files
 - `Makefile` — Build and install commands
+
+---
+
+---
+
+## 📦 Release Artifacts
+
+- `.deb` and `.rpm` packages are published with each release for easy installation on Linux distributions.
 
 ---
 

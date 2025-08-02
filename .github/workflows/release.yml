@@ -28,11 +28,40 @@ jobs:
           NEW_VERSION="$(echo $VERSION | awk -F. '{print $1}')".$MINOR.0
           sed -i "s/version = .*/version = $NEW_VERSION/" Makefile
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+      - name: Install fpm
+        run: sudo gem install --no-document fpm
+
+      - name: Package .deb
+        run: |
+          mkdir -p pkg/deb/usr/local/bin
+          cp docker-wizard pkg/deb/usr/local/bin/
+          fpm -s dir -t deb -n docker-wizard -v ${{ steps.bump_version.outputs.new_version }} --prefix=/ usr/local/bin/docker-wizard
+
+      - name: Package .rpm
+        run: |
+          mkdir -p pkg/rpm/usr/local/bin
+          cp docker-wizard pkg/rpm/usr/local/bin/
+          fpm -s dir -t rpm -n docker-wizard -v ${{ steps.bump_version.outputs.new_version }} --prefix=/ usr/local/bin/docker-wizard
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump_version.outputs.new_version }}
           name: Release v${{ steps.bump_version.outputs.new_version }}
           body: "Automated release from workflow."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload .deb
+        uses: softprops/action-gh-release@v2
+        with:
+          files: docker-wizard_${{ steps.bump_version.outputs.new_version }}_amd64.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload .rpm
+        uses: softprops/action-gh-release@v2
+        with:
+          files: docker-wizard-${{ steps.bump_version.outputs.new_version }}-1.x86_64.rpm
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
