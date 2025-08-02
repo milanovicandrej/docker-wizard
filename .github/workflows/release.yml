@@ -57,7 +57,9 @@ jobs:
           cd pkg/rpm
           fpm -s dir -t rpm -n docker-wizard -v ${{ steps.bump_version.outputs.new_version }} --prefix=/ usr/local/bin/docker-wizard
 
+
       - name: Create GitHub Release
+        id: create_release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.bump_version.outputs.new_version }}
@@ -71,7 +73,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_github_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: pkg/deb/docker-wizard_${{ steps.bump_version.outputs.new_version }}_amd64.deb
           asset_name: docker-wizard_${{ steps.bump_version.outputs.new_version }}_amd64.deb
           asset_content_type: application/x-deb
@@ -81,7 +83,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_github_release.outputs.upload_url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: pkg/rpm/docker-wizard-${{ steps.bump_version.outputs.new_version }}-1.x86_64.rpm
           asset_name: docker-wizard-${{ steps.bump_version.outputs.new_version }}-1.x86_64.rpm
           asset_content_type: application/x-rpm
