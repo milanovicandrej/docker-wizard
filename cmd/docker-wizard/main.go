@@ -10,7 +10,7 @@ import (
 	"github.com/milanovicandrej/docker-wizard/internal/generate"
 )
 
-const Version = "0.3.0"
+const Version = "0.4.0"
 
 func main() {
 	app := &cli.App{
