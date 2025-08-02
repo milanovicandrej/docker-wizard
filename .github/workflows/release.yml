@@ -42,16 +42,19 @@ jobs:
       - name: Install fpm
         run: sudo gem install --no-document fpm
 
+
       - name: Package .deb
         run: |
           mkdir -p pkg/deb/usr/local/bin
           cp docker-wizard pkg/deb/usr/local/bin/
+          cd pkg/deb
           fpm -s dir -t deb -n docker-wizard -v ${{ steps.bump_version.outputs.new_version }} --prefix=/ usr/local/bin/docker-wizard
 
       - name: Package .rpm
         run: |
           mkdir -p pkg/rpm/usr/local/bin
           cp docker-wizard pkg/rpm/usr/local/bin/
+          cd pkg/rpm
           fpm -s dir -t rpm -n docker-wizard -v ${{ steps.bump_version.outputs.new_version }} --prefix=/ usr/local/bin/docker-wizard
 
       - name: Create GitHub Release
