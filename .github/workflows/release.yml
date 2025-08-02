@@ -27,7 +27,18 @@ jobs:
           MINOR=$(echo $VERSION | awk -F. '{print $2+1}')
           NEW_VERSION="$(echo $VERSION | awk -F. '{print $1}')".$MINOR.0
           sed -i "s/version = .*/version = $NEW_VERSION/" Makefile
+          sed -i "s/const Version = \"[0-9.]*\"/const Version = \"$NEW_VERSION\"/" cmd/docker-wizard/main.go
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit and push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Makefile cmd/docker-wizard/main.go
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }} [skip ci]"
+          git push origin HEAD:main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install fpm
         run: sudo gem install --no-document fpm
 
