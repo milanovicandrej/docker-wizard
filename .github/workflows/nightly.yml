@@ -1,0 +1,29 @@
+name: Nightly Build and Badge Update
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Every night at 2am UTC
+
+jobs:
+  nightly-build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Download dependencies
+        run: go mod tidy
+      - name: Build
+        run: make build
+      - name: Run tests
+        run: go test ./internal/generate
+      - name: Update badge in README
+        uses: peter-evans/create-pull-request@v5
+        with:
+          commit-message: "Update build badge after nightly run"
+          title: "Update build badge after nightly run"
+          body: "This PR updates the build badge in README.md after nightly build and test."
+          branch: "update-badge-nightly"

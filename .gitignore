@@ -1,0 +1,28 @@
+# Go build artifacts
+/bin/
+/docker-wizard
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+
+# Output of build tools
+/build/
+
+# Dependency directories
+/vendor/
+
+# IDE/editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Go module files
+/go.sum

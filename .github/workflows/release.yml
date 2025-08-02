@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Download dependencies
+        run: go mod tidy
+      - name: Build
+        run: make build
+      - name: Run tests
+        run: go test ./internal/generate
+      - name: Bump minor version
+        id: bump_version
+        run: |
+          VERSION=$(grep 'version =' Makefile | awk '{print $3}')
+          if [ -z "$VERSION" ]; then VERSION="0.1.0"; fi
+          MINOR=$(echo $VERSION | awk -F. '{print $2+1}')
+          NEW_VERSION="$(echo $VERSION | awk -F. '{print $1}')".$MINOR.0
+          sed -i "s/version = .*/version = $NEW_VERSION/" Makefile
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.bump_version.outputs.new_version }}
+          name: Release v${{ steps.bump_version.outputs.new_version }}
+          body: "Automated release from workflow."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
