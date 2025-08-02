@@ -2,7 +2,7 @@
 BINARY=docker-wizard
 BUILD_PATH=./cmd/docker-wizard
 INSTALL_PATH=/home/milanovicandrej/.local/bin/$(BINARY)
-version = 0.4.0
+version = 0.5.0
 
 
 .PHONY: all build install clean deps
