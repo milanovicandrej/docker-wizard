@@ -15,10 +15,6 @@ jobs:
           go-version: '1.21'
       - name: Download dependencies
         run: go mod tidy
-      - name: Build
-        run: make build
-      - name: Run tests
-        run: go test ./internal/generate
       - name: Bump minor version
         id: bump_version
         run: |
@@ -39,6 +35,11 @@ jobs:
           git push origin HEAD:main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build
+        run: make build
+      - name: Run tests
+        run: go test ./internal/generate
       - name: Install fpm
         run: sudo gem install --no-document fpm
 
